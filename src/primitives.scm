@@ -181,6 +181,16 @@ except:
 ;; Main loop control
 (define do-run-loop #t)
 
+;(define-public (behavior-tree-run)
+;"
+; behavior-tree-run
+
+; Run the Eva behavior tree main loop (in a new thread),
+; Call (behavior-tree-halt) to exit the loop.
+;"
+;	(set! do-run-loop #t)
+;	(call-with-new-thread
+;		(lambda () (cog-evaluate! (DefinedPredicateNode "main loop")))))
 (define-public (behavior-tree-run)
 "
  behavior-tree-run
@@ -189,8 +199,8 @@ except:
  Call (behavior-tree-halt) to exit the loop.
 "
 	(set! do-run-loop #t)
-	(call-with-new-thread
-		(lambda () (cog-evaluate! (DefinedPredicateNode "main loop")))))
+	(psi-run)
+)
 
 (define-public (behavior-tree-halt)
 "
