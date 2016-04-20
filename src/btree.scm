@@ -48,11 +48,14 @@
 ;;except:
 ;;    print('Rest API can't be started. Check Python configuration')
 ;;")
+(add-to-load-path "/usr/local/share/opencog/scm")
 
 ; Load the behavior trees.
 (use-modules (opencog exec))        ; needed for cog-evaluate! in put_atoms.py
 (use-modules (opencog eva-model))   ; needed for defines in put_atoms.py
 (use-modules (opencog eva-behavior))
+
+(use-modules (opencog openpsi))
 
 ; Load the Sophia personality configuration.
 ; (display %load-path)

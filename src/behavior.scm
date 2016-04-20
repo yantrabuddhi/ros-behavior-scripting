@@ -4,16 +4,11 @@
 (use-modules (ice-9 format))
 
 
-;(add-to-load-path "/usr/local/share/opencog/scm")
+(add-to-load-path "/usr/local/share/opencog/scm")
 ;(add-to-load-path "/usr/local/share/opencog/scm/opencog")
-
-;(load-from-path "openpsi/active-schema-pool.scm")
-
 (use-modules (opencog))
 (use-modules (opencog openpsi))
-;(add-to-load-path "/home/mandeep/hansonrobotics/opencog/opencog/opencog")
 
-;(load "/home/mandeep/hansonrobotics/opencog/opencog/opencog/openpsi/active-schema-pool.scm")
 ; Configurable robot behavior tree, implemented in Atomese.
 ;
 ; Defines a set of behaviors that express Eva's personality. The
@@ -742,34 +737,62 @@
 	))
 ;;.........
 ;;psi-rules
-(DefineLink
-	(DefinedPredicate "acting")
-	(SequentialAnd
-		(Evaluation (GroundedPredicate "scm: print-msg")
-			(ListLink (Node "--- acting")))
-		(True)
-	))
+;(DefineLink
+;	(DefinedPredicateNode "context1")
+;	(True)
+;)
+;(DefineLink
+;	(DefinedPredicateNode "goal1")
+;	(True)
+;)
+
+;(DefineLink
+;	(DefinedSchemaNode "acting")
+;	(ExecutionOutputLink (GroundedSchemaNode "scm: print-msg")
+;			(ListLink (Node "--- Finished talking")))
+;	)
+;(define (prnt) (ExecutionOutputLink (DefinedSchemaNode "acting")(ListLink)) )
+(define (pred-2-schema pnode-str) 
+	(DefineLink 
+		(DefinedSchemaNode pnode-str)
+		(ExecutionOutputLink (GroundedSchemaNode "scm: cog-evaluate!")
+			(ListLink (DefinedPredicateNode pnode-str))
+)))
+;;
+(pred-2-schema "Interaction requested action")
+(pred-2-schema "New arrival sequence action")
+(pred-2-schema "Someone left action")
+(pred-2-schema "Interact with people action")
+(pred-2-schema "Nothing is happening action")
+(pred-2-schema "Speech started? action")
+(pred-2-schema "Speech ongoing? action")
+(pred-2-schema "Speech ended? action")
+;;
+(DefineLink (DefinedPredicateNode "do-noop") (True))
+(pred-2-schema "do-noop")
 
 (define demand-satisfied (True))
 (define speech-demand-satisfied (True))
 (define face-demand (psi-demand "face interaction" 1))
 (define speech-demand (psi-demand "speech interaction" 1))
-;(psi-rule (list (True)) (DefinedPredicate "acting") (True) (stv 1 1) face-demand)
-(psi-rule (list (DefinedPredicate "Interaction requested"))(DefinedPredicate "Interaction requested action") demand-satisfied (stv 1 1) face-demand)
-(psi-rule (list (DefinedPredicate "New arrival sequence")) (DefinedPredicate "New arrival sequence action") demand-satisfied (stv 1 1) face-demand)
-(psi-rule (list (DefinedPredicate "Someone left")) (DefinedPredicate "Someone left action") demand-satisfied (stv 1 1) face-demand)
-(psi-rule (list (DefinedPredicate "Interact with people")) (DefinedPredicate "Interact with people action") demand-satisfied (stv 1 1) face-demand)
-(psi-rule (list (DefinedPredicate "Nothing is happening")) (DefinedPredicate "Nothing is happening action") demand-satisfied (stv 1 1) face-demand)
-(psi-rule (list (DefinedPredicate "Speech started?")) (DefinedPredicate "Speech started? action") speech-demand-satisfied (stv 1 1) speech-demand)
-(psi-rule (list (DefinedPredicate "Speech ongoing?")) (DefinedPredicate "Speech ongoing? action") speech-demand-satisfied (stv 1 1) speech-demand)
-(psi-rule (list (DefinedPredicate "Speech ended?")) (DefinedPredicate "Speech ended? action") speech-demand-satisfied (stv 1 1) speech-demand)
+(define run-demand (psi-demand "run demand" 1))
+;(psi-rule (list (DefinedPredicateNode "context1")) (DefinedSchemaNode "acting") (DefinedPredicateNode "goal1") (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Interaction requested"))(DefinedSchemaNode "Interaction requested action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "New arrival sequence")) (DefinedSchemaNode "New arrival sequence action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Someone left")) (DefinedSchemaNode "Someone left action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Interact with people")) (DefinedSchemaNode "Interact with people action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Nothing is happening")) (DefinedSchemaNode "Nothing is happening action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Speech started?")) (DefinedSchemaNode "Speech started? action") speech-demand-satisfied (stv 1 1) speech-demand)
+(psi-rule (list (DefinedPredicate "Speech ongoing?")) (DefinedSchemaNode "Speech ongoing? action") speech-demand-satisfied (stv 1 1) speech-demand)
+(psi-rule (list (DefinedPredicate "Speech ended?")) (DefinedSchemaNode "Speech ended? action") speech-demand-satisfied (stv 1 1) speech-demand)
+;(psi-rule (list(DefinedPredicate "Continue running loop?")(DefinedPredicate "ROS is running?")) (DefinedSchemaNode "do-noop") demand-satisfied (stv 1 1) run-demand)
 ;; ------------------------------------------------------------------
 
 ;; Main loop. Uses tail recursion optimization to form the loop.
-;(DefineLink
-;	(DefinedPredicate "main loop")
-;	(SatisfactionLink
-;		(SequentialAnd
+(DefineLink
+	(DefinedPredicate "main loop")
+	(SatisfactionLink
+		(SequentialAnd
 ;			(True (Evaluation (GroundedPredicate "scm: psi-step") (ListLink)))
 ;			(DefinedPredicate "Continue running loop?")
 ;			(DefinedPredicate "ROS is running?")
@@ -798,11 +821,12 @@
 ;
 ;			; If ROS is dead, or the continue flag not set, then stop
 ;			; running the behavior loop.
-;			(DefinedPredicate "Continue running loop?")
-;			(DefinedPredicate "ROS is running?")
-;
-;			;; Call self -- tail-recurse.
-;			(DefinedPredicate "main loop")
+			(DefinedPredicate "Continue running loop?")
+			(DefinedPredicate "ROS is running?")
+
+			;; Call self -- tail-recurse.
+			(DefinedPredicate "main loop")
+)))
 ;
 ;;
 ; ----------------------------------------------------------------------

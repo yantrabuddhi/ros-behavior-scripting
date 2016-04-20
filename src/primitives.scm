@@ -14,6 +14,7 @@
 (use-modules (opencog) (opencog query) (opencog exec))
 (use-modules (opencog atom-types))
 (use-modules (opencog python))
+(use-modules (opencog openpsi))
 
 ; Try loading the python code from this directory;
 ; else go for the install directory. This is kind-of hacky;
@@ -199,7 +200,11 @@ except:
  Call (behavior-tree-halt) to exit the loop.
 "
 	(set! do-run-loop #t)
+	(call-with-new-thread
+		(lambda () (cog-evaluate! (DefinedPredicateNode "main loop"))))
 	(psi-run)
+	;(while #t ((usleep 100000)(psi-step)) ) causes crash
+
 )
 
 (define-public (behavior-tree-halt)
