@@ -4,12 +4,13 @@
 (use-modules (ice-9 format))
 
 
-(add-to-load-path "/usr/local/share/opencog/scm")
-(add-to-load-path "/usr/local/share/opencog/scm/opencog")
+;(add-to-load-path "/usr/local/share/opencog/scm")
+;(add-to-load-path "/usr/local/share/opencog/scm/opencog")
 
-(load-from-path "openpsi/active-schema-pool.scm")
+;(load-from-path "openpsi/active-schema-pool.scm")
 
 (use-modules (opencog))
+(use-modules (opencog openpsi))
 ;(add-to-load-path "/home/mandeep/hansonrobotics/opencog/opencog/opencog")
 
 ;(load "/home/mandeep/hansonrobotics/opencog/opencog/opencog/openpsi/active-schema-pool.scm")
@@ -753,15 +754,15 @@
 (define speech-demand-satisfied (True))
 (define face-demand (psi-demand "face interaction" 1))
 (define speech-demand (psi-demand "speech interaction" 1))
-(psi-rule (list (True)) (DefinedPredicate "acting") (True) (stv 1 1) face-demand)
-;(psi-rule (list (DefinedPredicate "Interaction requested"))(DefinedPredicate "Interaction requested action") demand-satisfied (stv 1 1) face-demand)
-;(psi-rule (list (DefinedPredicate "New arrival sequence")) (DefinedPredicate "New arrival sequence action") demand-satisfied (stv 1 1) face-demand)
-;(psi-rule (list (DefinedPredicate "Someone left")) (DefinedPredicate "Someone left action") demand-satisfied (stv 1 1) face-demand)
-;(psi-rule (list (DefinedPredicate "Interact with people")) (DefinedPredicate "Interact with people action") demand-satisfied (stv 1 1) face-demand)
-;(psi-rule (list (DefinedPredicate "Nothing is happening")) (DefinedPredicate "Nothing is happening action") demand-satisfied (stv 1 1) face-demand)
-;(psi-rule (list (DefinedPredicate "Speech started?")) (DefinedPredicate "Speech started? action") speech-demand-satisfied (stv 1 1) speech-demand)
-;(psi-rule (list (DefinedPredicate "Speech ongoing?")) (DefinedPredicate "Speech ongoing? action") speech-demand-satisfied (stv 1 1) speech-demand)
-;(psi-rule (list (DefinedPredicate "Speech ended?")) (DefinedPredicate "Speech ended? action") speech-demand-satisfied (stv 1 1) speech-demand)
+;(psi-rule (list (True)) (DefinedPredicate "acting") (True) (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Interaction requested"))(DefinedPredicate "Interaction requested action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "New arrival sequence")) (DefinedPredicate "New arrival sequence action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Someone left")) (DefinedPredicate "Someone left action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Interact with people")) (DefinedPredicate "Interact with people action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Nothing is happening")) (DefinedPredicate "Nothing is happening action") demand-satisfied (stv 1 1) face-demand)
+(psi-rule (list (DefinedPredicate "Speech started?")) (DefinedPredicate "Speech started? action") speech-demand-satisfied (stv 1 1) speech-demand)
+(psi-rule (list (DefinedPredicate "Speech ongoing?")) (DefinedPredicate "Speech ongoing? action") speech-demand-satisfied (stv 1 1) speech-demand)
+(psi-rule (list (DefinedPredicate "Speech ended?")) (DefinedPredicate "Speech ended? action") speech-demand-satisfied (stv 1 1) speech-demand)
 ;; ------------------------------------------------------------------
 
 ;; Main loop. Uses tail recursion optimization to form the loop.
