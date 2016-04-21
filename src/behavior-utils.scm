@@ -1,8 +1,8 @@
 (use-modules (srfi srfi-1) )
 
-;(add-to-load-path "/usr/local/share/opencog/scm")
-;(use-modules (opencog))
-;(use-modules (opencog opencog exec))
+(add-to-load-path "/usr/local/share/opencog/scm")
+(use-modules (opencog))
+(use-modules (opencog exec))
 ;(use-modules (opencog openpsi))
 
 (define timer-list '())
@@ -32,4 +32,127 @@
 							)
 							#f))
 )
+
+
+;;
+;;
+;; Helper Functions
+;(define (set-timer-sec-ms id secs msec) ((set-timer id (cons secs msec))(stv 1 1)) ) 
+(define num-v-list '())
+
+(define (add-num-v)
+	(set! num-v-list (append num-v-list 0))
+	(length num-v-list)
+)
+
+;(define (node2num node) (cog-name node))
+
+;(define (get-num-var v-id)
+;	(NumberNode (list-ref num-v-list (- (node2num v-id) 1)))
+;)
+
+;(define (reset-num-var v-id) (list-set! num-v-list (-(node2num v-id) 1) 0)
+;)
+
+;(define (set-num-var v-id)
+;	(list-set! num-v-list (-(node2num v-id) 1) 1)
+;)
+
+;(define (make-number-variable v-name)
+;	(let ((v-id (add-num-v)))(
+;		(DefineLink
+;			(DefinedSchemaNode (string-append "num-var:" v-name))
+;			(NumberNode v-id)
+;		)
+;		(DefineLink
+;			(DefinedSchemaNode (string-append "get-num-var:" v-name))
+;			(ExecutionOutputLink
+;				(GroundedSchemaNode ("scm: get-num-var"))
+;				(ListLink (DefinedSchemaNode (string-append "num-var:" v-name)))
+;			)
+;		)
+;		(DefineLink
+;			(DefinedPredicateNode (string-append "reset-num-var:" v-name))
+;			(EvaluationLink
+;				(GroundedPredicateNode ("scm: reset-num-var"))
+;				(ListLink (DefinedSchemaNode (string-append "num-var:" v-name)))
+;			)
+;		)
+;		(DefineLink
+;			(DefinedPredicateNode (string-append "set-num-var:" v-name))
+;			(EvaluationLink
+;				(GroundedPredicateNode ("scm: set-num-var"))
+;				(ListLink (DefinedSchemaNode (string-append "num-var:" v-name)))
+;			)
+;		)
+;	v-id
+;	)
+;)
+
+
+(define (node2num node) (cog-name node))
+
+(define (get-num-var v-id)
+	(if (> 0 (list-ref num-v-list (- (node2num v-id) 1)))) (stv 1 1) (stv 0 1))
+)
+
+(define (reset-num-var v-id) (list-set! num-v-list (-(node2num v-id) 1) 0)
+)
+
+(define (set-num-var v-id)
+	(list-set! num-v-list (-(node2num v-id) 1) 1)
+)
+
+(define (pred-2-schema pnode-str) 
+	(DefineLink 
+		(DefinedSchemaNode pnode-str)
+		(ExecutionOutputLink (GroundedSchemaNode "scm: cog-evaluate!")
+			(ListLink (DefinedPredicateNode pnode-str))
+)))
+
+(define (make-number-variable v-name)
+	(let ((v-id (add-num-v)))(
+		(DefineLink
+			(DefinedSchemaNode (string-append "num-var:" v-name))
+			(NumberNode v-id)
+		)
+		(DefineLink
+			(DefinedPredicateNode (string-append "get-num-var:" v-name))
+			(EvaluationLink
+				(GroundedPredicateNode ("scm: get-num-var"))
+				(ListLink (DefinedSchemaNode (string-append "num-var:" v-name)))
+			)
+		)
+		(DefineLink
+			(DefinedPredicateNode (string-append "reset-num-var:" v-name))
+			(EvaluationLink
+				(GroundedPredicateNode ("scm: reset-num-var"))
+				(ListLink (NumberNode v-id))
+			)
+		)
+		(DefineLink
+			(DefinedPredicateNode (string-append "set-num-var:" v-name))
+			(EvaluationLink
+				(GroundedPredicateNode ("scm: set-num-var"))
+				(ListLink (NumberNode v-id))
+			)
+		)
+		(pred-2-schema (string-append "reset-num-var:" v-name))
+		(pred-2-schema (string-append "set-num-var:" v-name))
+	v-id
+	)
+)
+
+(define (declare-timer timer-name timer-id)
+	(DefineLink
+		(DefinedSchemaNode (string-append "timer:" timer-name))
+		(NumberNode timer-id)
+	)
+)
+
+;;
+;;
+;;(define (declare-psi-timer timer-name)
+;;)
+
 
