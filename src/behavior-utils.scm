@@ -6,10 +6,17 @@
 ;(use-modules (opencog openpsi))
 
 (define timer-list '())
-;elps is pair of seconds and microseconds
-(define (set-timer id elps) (set! timer-list (append timer-list (list(list id elps (gettimeofday))))))
+
+(define (clear-timers) (set! timer-list '()))
 
 (define (get-timer-info id) (filter (lambda (x)(= id (car x))) timer-list))
+
+(define (remove-timer id) (set! timer-list (filter (lambda (x)(not (= id (car x)))) timer-list) ))
+
+(define (timer-exists id) (> (length (get-timer-info id)) 0) )
+
+;elps is pair of seconds and microseconds
+(define (set-timer id elps) (if (not (timer-exists id)) (set! timer-list (append timer-list (list(list id elps (gettimeofday))))) (display "timer already exists")) )
 
 (define (peek-timer id) (let ((tmr (get-timer-info id)))(if (= 1 (length tmr)) 
 							(let* ( (tm (cdr (car tmr))) (elp (car tm)) (st (car (cdr tm))) 
@@ -21,3 +28,4 @@
 							)
 							#f))
 )
+
