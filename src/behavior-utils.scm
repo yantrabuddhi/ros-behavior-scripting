@@ -9,6 +9,10 @@
 
 (define (clear-timers) (set! timer-list '()))
 
+;(define (get-timer-info id) (filter (lambda (x)(string=? id (car x))) timer-list))
+
+;(define (remove-timer id) (set! timer-list (filter (lambda (x)(not (string=? id (car x)))) timer-list) ))
+
 (define (get-timer-info id) (filter (lambda (x)(= id (car x))) timer-list))
 
 (define (remove-timer id) (set! timer-list (filter (lambda (x)(not (= id (car x)))) timer-list) ))
