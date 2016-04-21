@@ -41,7 +41,7 @@
 (define num-v-list '())
 
 (define (add-num-v)
-	(set! num-v-list (append num-v-list 0))
+	(set! num-v-list (append num-v-list '(0)))
 	(length num-v-list)
 )
 
@@ -90,17 +90,18 @@
 ;)
 
 
-(define (node2num node) (cog-name node))
-
-(define (get-num-var v-id)
-	(if (> 0 (list-ref num-v-list (- (node2num v-id) 1)))) (stv 1 1) (stv 0 1))
+(define (node2num node) (numerator (inexact->exact(string->number (cog-name node)) )) )
+;(define (node2num node) node)
+;(define (node2num node) (cog-name node))
+(define (get-num-var vid1)
+	(if (> (list-ref num-v-list (- (node2num vid1) 1)) 0) (stv 1 1) (stv 0 1))
 )
 
-(define (reset-num-var v-id) (list-set! num-v-list (-(node2num v-id) 1) 0)
+(define (reset-num-var vid1) (list-set! num-v-list (-(node2num vid1) 1) 0) (stv 1 1)
 )
 
-(define (set-num-var v-id)
-	(list-set! num-v-list (-(node2num v-id) 1) 1)
+(define (set-num-var vid1)
+	(list-set! num-v-list (- (node2num vid1) 1) 1) (stv 1 1)
 )
 
 (define (pred-2-schema pnode-str) 
@@ -109,9 +110,9 @@
 		(ExecutionOutputLink (GroundedSchemaNode "scm: cog-evaluate!")
 			(ListLink (DefinedPredicateNode pnode-str))
 )))
-
+(define v-id 0)
 (define (make-number-variable v-name)
-	(let ((v-id (add-num-v)))(
+		(set! v-id (add-num-v))
 		(DefineLink
 			(DefinedSchemaNode (string-append "num-var:" v-name))
 			(NumberNode v-id)
@@ -119,29 +120,60 @@
 		(DefineLink
 			(DefinedPredicateNode (string-append "get-num-var:" v-name))
 			(EvaluationLink
-				(GroundedPredicateNode ("scm: get-num-var"))
-				(ListLink (DefinedSchemaNode (string-append "num-var:" v-name)))
+				(GroundedPredicateNode "scm: get-num-var")
+				(ListLink (NumberNode v-id))
 			)
 		)
 		(DefineLink
 			(DefinedPredicateNode (string-append "reset-num-var:" v-name))
 			(EvaluationLink
-				(GroundedPredicateNode ("scm: reset-num-var"))
+				(GroundedPredicateNode "scm: reset-num-var")
 				(ListLink (NumberNode v-id))
 			)
 		)
 		(DefineLink
 			(DefinedPredicateNode (string-append "set-num-var:" v-name))
 			(EvaluationLink
-				(GroundedPredicateNode ("scm: set-num-var"))
+				(GroundedPredicateNode "scm: set-num-var")
 				(ListLink (NumberNode v-id))
 			)
 		)
 		(pred-2-schema (string-append "reset-num-var:" v-name))
 		(pred-2-schema (string-append "set-num-var:" v-name))
-	v-id
-	)
+	  	v-id
 )
+;(define (make-number-variable v-name)
+;	(let ((v-id (add-num-v)))(
+;		(DefineLink
+;			(DefinedSchemaNode (string-append "num-var:" v-name))
+;			(NumberNode v-id)
+;		)
+;		(DefineLink
+;			(DefinedPredicateNode (string-append "get-num-var:" v-name))
+;			(EvaluationLink
+;				(GroundedPredicateNode "scm: get-num-var")
+;				(ListLink (NumberNode v-id))
+;			)
+;		)
+;		(DefineLink
+;			(DefinedPredicateNode (string-append "reset-num-var:" v-name))
+;			(EvaluationLink
+;				(GroundedPredicateNode "scm: reset-num-var")
+;				(ListLink (NumberNode v-id))
+;			)
+;		)
+;		(DefineLink
+;			(DefinedPredicateNode (string-append "set-num-var:" v-name))
+;			(EvaluationLink
+;				(GroundedPredicateNode "scm: set-num-var")
+;				(ListLink (NumberNode v-id))
+;			)
+;		)
+;		(pred-2-schema (string-append "reset-num-var:" v-name))
+;		(pred-2-schema (string-append "set-num-var:" v-name))
+;	  	v-id)
+;	)
+;)
 
 (define (declare-timer timer-name timer-id)
 	(DefineLink
