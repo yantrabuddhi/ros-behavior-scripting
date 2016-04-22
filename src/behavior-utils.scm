@@ -20,7 +20,16 @@
 (define (timer-exists id) (> (length (get-timer-info id)) 0) )
 
 ;elps is pair of seconds and microseconds
-(define (set-timer id elps) (if (not (timer-exists id)) (set! timer-list (append timer-list (list(list id elps (gettimeofday))))) (display "timer already exists")) )
+;(define (set-timer id elps) (if (not (timer-exists id)) (set! timer-list (append timer-list (list(list id elps (gettimeofday))))) (display "timer already exists")) )
+(define (set-timer id elps) (if (not (timer-exists id)) (set! timer-list (append timer-list (list(list id elps (gettimeofday)))))
+			 	(do ((i 1 (1+ i))) ((> i (length timer-list))) 
+					(if (= (car (list-ref timer-list (- i 1))) id) 
+						(list-set! timer-list (- i 1) (list id elps (gettimeofday)))
+					) 
+				)
+			) 
+)
+
 
 (define (peek-timer id) (let ((tmr (get-timer-info id)))(if (= 1 (length tmr)) 
 							(let* ( (tm (cdr (car tmr))) (elp (car tm)) (st (car (cdr tm))) 
@@ -44,19 +53,6 @@
 	(set! num-v-list (append num-v-list '(0)))
 	(length num-v-list)
 )
-
-;(define (node2num node) (cog-name node))
-
-;(define (get-num-var v-id)
-;	(NumberNode (list-ref num-v-list (- (node2num v-id) 1)))
-;)
-
-;(define (reset-num-var v-id) (list-set! num-v-list (-(node2num v-id) 1) 0)
-;)
-
-;(define (set-num-var v-id)
-;	(list-set! num-v-list (-(node2num v-id) 1) 1)
-;)
 
 ;(define (make-number-variable v-name)
 ;	(let ((v-id (add-num-v)))(
@@ -91,8 +87,7 @@
 
 
 (define (node2num node) (numerator (inexact->exact(string->number (cog-name node)) )) )
-;(define (node2num node) node)
-;(define (node2num node) (cog-name node))
+
 (define (get-num-var vid1)
 	(if (> (list-ref num-v-list (- (node2num vid1) 1)) 0) (stv 1 1) (stv 0 1))
 )
@@ -110,9 +105,9 @@
 		(ExecutionOutputLink (GroundedSchemaNode "scm: cog-evaluate!")
 			(ListLink (DefinedPredicateNode pnode-str))
 )))
-(define v-id 0)
+;(define v-id 0)
 (define (make-number-variable v-name)
-		(set! v-id (add-num-v))
+		(let ((v-id (add-num-v)))
 		(DefineLink
 			(DefinedSchemaNode (string-append "num-var:" v-name))
 			(NumberNode v-id)
@@ -141,46 +136,15 @@
 		(pred-2-schema (string-append "reset-num-var:" v-name))
 		(pred-2-schema (string-append "set-num-var:" v-name))
 	  	v-id
+		)
 )
-;(define (make-number-variable v-name)
-;	(let ((v-id (add-num-v)))(
-;		(DefineLink
-;			(DefinedSchemaNode (string-append "num-var:" v-name))
-;			(NumberNode v-id)
-;		)
-;		(DefineLink
-;			(DefinedPredicateNode (string-append "get-num-var:" v-name))
-;			(EvaluationLink
-;				(GroundedPredicateNode "scm: get-num-var")
-;				(ListLink (NumberNode v-id))
-;			)
-;		)
-;		(DefineLink
-;			(DefinedPredicateNode (string-append "reset-num-var:" v-name))
-;			(EvaluationLink
-;				(GroundedPredicateNode "scm: reset-num-var")
-;				(ListLink (NumberNode v-id))
-;			)
-;		)
-;		(DefineLink
-;			(DefinedPredicateNode (string-append "set-num-var:" v-name))
-;			(EvaluationLink
-;				(GroundedPredicateNode "scm: set-num-var")
-;				(ListLink (NumberNode v-id))
-;			)
-;		)
-;		(pred-2-schema (string-append "reset-num-var:" v-name))
-;		(pred-2-schema (string-append "set-num-var:" v-name))
-;	  	v-id)
-;	)
-;)
 
-(define (declare-timer timer-name timer-id)
-	(DefineLink
-		(DefinedSchemaNode (string-append "timer:" timer-name))
-		(NumberNode timer-id)
-	)
-)
+;(define (declare-timer timer-name)
+;	(let ((tid (make-num-variable (string-append "timer-" timer-name)) ))
+;	(set-timer)
+;	(DefineLink)
+;	
+;)
 
 ;;
 ;;
