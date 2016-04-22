@@ -169,12 +169,19 @@
 ;;
 ;;
 ;;1
-(define (declare-timer timer-name)
-	(make-number-variable (string-append "timer-" timer-name))
+(define (declare-timer timer-name secs ms)
+	(let ((tid (make-number-variable (string-append "timer-" timer-name)) ))
 ;	(let ((tid (make-num-variable (string-append "timer-" timer-name)) ))
 ;	(set-timer tid (cons secs ms)) ; DefinedSchemaNode (string-append "num-var:timer-" timer-name) is the id of timer
 ;	(psi-rule (list(DefinedPredicateNode (string-append "get-num-var:timer-" timer-name))) )
-;	(DefineLink)
+	(DefineLink ;;?state-link
+		(DefinedSchemaNode (string-append "fix-timer:" timer-name)) ;;default setting
+		(ListLink
+			(NumberNode secs)
+			(NumberNode ms)
+			(NumberNode tid)
+		)
+	))
 )
 ;;2
 (define (get-timer-id timer-name)
@@ -188,7 +195,7 @@
 (define (peek-timer-name name) (peek-timer (get-timer-id name))
 )
 ;;5
-(define (remove-timer-name name) (remove-timer (get-timer-id name)) )
+;;(define (remove-timer-name name) (remove-timer (get-timer-id name)) );;defined with variable and variable not removed thus no remove should happen
 ;;6
 (define (timer-exists-name name) (timer-exists (get-timer-id name)) )
 ;;7
@@ -201,4 +208,7 @@
 (define (set-timer-var-pred timer-name) (DefinedPredicateNode (string-append "set-num-var:timer-" timer-name)))
 ;;11
 (define (reset-timer-var-pred timer-name) (DefinedPredicateNode (string-append "reset-num-var:timer-" timer-name)))
+
+;;;;;;;; High Level Functions Below ;;;;;;;;;;;
+;(define (declare-psi-timer timer-name))
 
