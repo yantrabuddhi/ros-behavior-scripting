@@ -139,16 +139,19 @@
 		)
 )
 
-;(define (declare-timer timer-name)
-;	(let ((tid (make-num-variable (string-append "timer-" timer-name)) ))
-;	(set-timer)
-;	(DefineLink)
-;	
-;)
+;;(DefinedSchemaNode (string-append "num-var:timer-" timer-name))
 
-;;
-;;
-;;(define (declare-psi-timer timer-name)
-;;)
+(define (declare-timer timer-name)
+	(make-number-variable (string-append "timer-" timer-name))
+;	(let ((tid (make-num-variable (string-append "timer-" timer-name)) ))
+;	(set-timer tid (cons secs ms)) ; DefinedSchemaNode (string-append "num-var:timer-" timer-name) is the id of timer
+;	(psi-rule (list(DefinedPredicateNode (string-append "get-num-var:timer-" timer-name))) )
+;	(DefineLink)
+)
+
+(define (get-timer-id timer-name)
+	(node2num (cog-execute! (DefinedSchemaNode (string-append "num-var:timer-" timer-name)) ) )
+)
+
 
 
