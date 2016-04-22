@@ -5,6 +5,8 @@
 (use-modules (opencog exec))
 ;(use-modules (opencog openpsi))
 
+
+;;below is the low level api for timers and boolean variables
 (define timer-list '())
 
 (define (clear-timers) (set! timer-list '()))
@@ -99,13 +101,18 @@
 	(list-set! num-v-list (- (node2num vid1) 1) 1) (stv 1 1)
 )
 
+
+;;;below is the middle api;;;
+;;
+;;
+;;
 (define (pred-2-schema pnode-str) 
 	(DefineLink 
 		(DefinedSchemaNode pnode-str)
 		(ExecutionOutputLink (GroundedSchemaNode "scm: cog-evaluate!")
 			(ListLink (DefinedPredicateNode pnode-str))
 )))
-;(define v-id 0)
+
 (define (make-number-variable v-name)
 		(let ((v-id (add-num-v)))
 		(DefineLink
@@ -139,8 +146,29 @@
 		)
 )
 
+
+(define (set-var-schema name) (DefinedSchemaNode (string-append "set-num-var:" name)))
+
+(define (reset-var-schema name) (DefinedSchemaNode (string-append "reset-num-var:" name)))
+
+(define (get-var-pred name) (DefinedPredicateNode (string-append "get-num-var:" name)))
+
+(define (set-var-pred name) (DefinedPredicateNode (string-append "set-num-var:" name)))
+
+(define (reset-var-pred name) (DefinedPredicateNode (string-append "reset-num-var:" name)))
+
+;;middle api ends;;
+
+
 ;;(DefinedSchemaNode (string-append "num-var:timer-" timer-name))
 
+;;;;;;;;below is the main api;;;;;;;;
+;;
+;;
+;;
+;;
+;;
+;;1
 (define (declare-timer timer-name)
 	(make-number-variable (string-append "timer-" timer-name))
 ;	(let ((tid (make-num-variable (string-append "timer-" timer-name)) ))
@@ -148,10 +176,25 @@
 ;	(psi-rule (list(DefinedPredicateNode (string-append "get-num-var:timer-" timer-name))) )
 ;	(DefineLink)
 )
-
+;;2
 (define (get-timer-id timer-name)
 	(node2num (cog-execute! (DefinedSchemaNode (string-append "num-var:timer-" timer-name)) ) )
 )
-
-
+;;3
+(define (set-timer-name name secs ms)
+	(set-timer (get-timer-id name) (cons secs ms))
+)
+;;4
+(define (peek-timer-name name) (peek-timer (get-timer-id name))
+)
+;;5
+(define (remove-timer-name name) (remove-timer (get-timer-id name)) )
+;;6
+(define (timer-exists-name name) (timer-exists (get-timer-id name)) )
+;;7
+(define (set-timer-var-schema timer-name) (DefinedSchemaNode (string-append "set-num-var:timer-" timer-name)))
+;;8
+(define (reset-timer-var-schema timer-name) (DefinedSchemaNode (string-append "reset-num-var:timer-" timer-name)))
+;;9
+(define (get-timer-var-pred timer-name) (DefinedPredicateNode (string-append "get-num-var:timer-" timer-name)))
 
