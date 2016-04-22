@@ -197,4 +197,8 @@
 (define (reset-timer-var-schema timer-name) (DefinedSchemaNode (string-append "reset-num-var:timer-" timer-name)))
 ;;9
 (define (get-timer-var-pred timer-name) (DefinedPredicateNode (string-append "get-num-var:timer-" timer-name)))
+;;10
+(define (set-timer-var-pred timer-name) (DefinedPredicateNode (string-append "set-num-var:timer-" timer-name)))
+;;11
+(define (reset-timer-var-pred timer-name) (DefinedPredicateNode (string-append "reset-num-var:timer-" timer-name)))
 
