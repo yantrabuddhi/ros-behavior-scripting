@@ -18,7 +18,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from opencog.scheme_wrapper import scheme_eval, scheme_eval_h, scheme_eval_as
-
+#from opencog.atomspace import AtomSpace, TruthValue
 # Simple API to isolate opencog atoms and imports from the ROS code,
 # so that we don't hack both ROS and Opencog in the same module.
 # Why? Not sure, seemed like a good idea at the time.

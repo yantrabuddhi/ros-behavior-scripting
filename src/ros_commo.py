@@ -35,7 +35,7 @@ from blender_api_msgs.msg import SomaState
 from chatbot.msg import ChatMessage
 
 from pi_face_tracker.msg import FaceEvent, Faces
-#from octomap import OctoMap
+from octomap import OctoMap
 # Not everything has this message; don't break if it's missing.
 # i.e. create a stub if its not defined.
 #try:
@@ -190,8 +190,8 @@ class EvaControl():
 		self.turn_pub.publish(trg)
 
 	def look_at_face_point(self, fid):
-		#self.octo.look_at_face(fid)
-		pass
+		self.octo.look_at_face(fid)
+		#pass
 
 	# ----------------------------------------------------------
 
@@ -383,8 +383,8 @@ class EvaControl():
 		self.control_mode = data.data
 
 	def face_loc_cb(self, data):
-		#self.octo.add_faces(data.faces)
-		pass
+		self.octo.add_faces(data.faces)
+		#pass
 
 	def __init__(self):
 		self.puta = PutAtoms()
@@ -404,7 +404,7 @@ class EvaControl():
 		self.gaze_pub = rospy.Publisher("/blender_api/set_gaze_target",
 			Target, queue_size=1)
 
-		#self.octo=OctoMap(self.turn_pub,self.gaze_pub)
+		self.octo=OctoMap(self.turn_pub,self.gaze_pub)
 
 
 		self.TOPIC_FACE_LOCATIONS = "/camera/face_locations"
