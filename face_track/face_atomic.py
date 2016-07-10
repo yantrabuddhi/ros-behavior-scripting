@@ -30,11 +30,6 @@ class FaceAtomic:
 	def __init__(self):
 		self.hostname = "localhost"
 		self.port = 17020
-	def update_face_octomap(self, faceid, xx, yy, zz):
-		face=self.face_loc_scm(faceid,xx,yy,zz)
-		#print face
-		#netcat(self.hostname, self.port, face + "\n")
-		#print "****Updated-face:"+str(faceid)+"-- x:"+str(xx)+" y:"+str(yy)+" z:"+str(zz)+"\n"
 
 	# Add a newly visible face to the atomspace.
 	def add_face_to_atomspace(self, faceid):
@@ -55,11 +50,6 @@ class FaceAtomic:
 		msg = self.delete_face(faceid)
 		netcat(self.hostname, self.port, msg)
 		print "Removed face from atomspace: ", faceid
-
-	# Put a face in octomap "faces"
-	def face_loc_scm(self,faceid,xx,yy,zz):
-		face ="(map-ato \"faces\" (NumberNode \""+str(faceid)+"\") "+str(xx)+" "+str(yy)+" "+str(zz)+")"
-		return face
 
 	# Build a simple string to define a face
 	def define_face(self, faceid):

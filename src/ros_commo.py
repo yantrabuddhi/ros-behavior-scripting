@@ -35,9 +35,7 @@ from blender_api_msgs.msg import SomaState
 from chatbot.msg import ChatMessage
 
 from pi_face_tracker.msg import FaceEvent, Faces
-from opencog.scheme_wrapper import scheme_eval, scheme_eval_h, scheme_eval_as
-import threading
-from opencog.atomspace import AtomSpace, TruthValue
+from octomap import OctoMap
 # Not everything has this message; don't break if it's missing.
 # i.e. create a stub if its not defined.
 #try:
@@ -192,26 +190,7 @@ class EvaControl():
 		self.turn_pub.publish(trg)
 
 	def look_at_face_point(self, fid):
-		#print "!!!!!!!!!! In look at face point"
-		#time.sleep(0.1)
-		self.lock.acquire()
-		try:
-			self.sc_str_get=str(fid)
-			print "!!!!!!!!!! In look at face point ", fid
-		finally:
-			self.lock.release()
-		#print "******look at face point: ", fid
-		#fc="(look-at-face (NumberNode \""+str(fid)+"\"))"
-		#ptstr=scheme_eval(self.atomspace,fc)
-		#if len(ptstr)<5:
-			#print "XX Face Point Invalid XX"
-			#return
-		#pts=ptstr.split()
-		#trg = Target()
-		#trg.x = float(pts[0])
-		#trg.y = float(pts[1])
-		#trg.z = float(pts[2])
-		#self.turn_pub.publish(trg)
+		self.octo.look_at_face(fid)
 
 	# ----------------------------------------------------------
 
@@ -404,58 +383,9 @@ class EvaControl():
 		self.control_mode = data.data
 	
 	def face_loc_cb(self, data):
-		#print "@@@@@@@@@@ In face cb"
-		self.lock.acquire()
-		try:
-			if len(self.sc_str_set)<1:
-				self.face_array=data.faces
-				self.sc_str_set="do"
-		finally:
-			self.lock.release()
-		#for face in data.faces:
-			#fac="(map-ato \"faces\" (NumberNode \""+str(face.id)+"\") "+str(face.point.x)+" "+str(face.point.y)+" "+str(face.point.z)+")"
-			#scheme_eval(self.atomspace,fac)
+		self.octo.set_faces(data.faces)
 
-	def thr(self):
-		self.atomspace = AtomSpace()#scheme_eval_as('(cog-atomspace)')
-		lpth="/home/mandeep/hr/opencog/ros-behavior-scripting/src/time-map.scm"
-		scheme_eval(self.atomspace, "(load \""+lpth+"\")")
-		#print scheme_eval(self.atomspace,"(+ 2 3)")
-		#scheme_eval(self.atomspace, "(map-ato \"faces\" (NumberNode \"2.0\") 1 2 3)")
-		rate=rospy.Rate(30)
-		while not rospy.is_shutdown():
-			rate.sleep()
-			self.lock.acquire()
-			try:
-				if len(self.sc_str_set)>0:
-					#print "faces: ", len(self.face_array)
-					for face in self.face_array:
-						#print "hello"
-						fac="(map-ato \"faces\" (NumberNode \""+str(face.id)+"\") "+str(face.point.x)+" "+str(face.point.y)+" "+str(face.point.z)+")"
-						scheme_eval(self.atomspace,fac)
-					self.sc_str_set=""
-
-				if len(self.sc_str_get)>0:
-					fid=self.sc_str_get
-					print "******look at face point: ", fid
-					fc="(look-at-face (NumberNode \""+fid+"\"))"
-					ptstr=scheme_eval(self.atomspace,fc)
-					if len(ptstr)<5:
-						print "XX Face Point Invalid XX"
-					else:
-						pts=ptstr.split()
-						trg = Target()
-						trg.x = float(pts[0])
-						trg.y = float(pts[1])
-						trg.z = float(pts[2])
-						self.turn_pub.publish(trg)
-						self.gaze_pub.publish(trg)
-					self.sc_str_get=""
-			finally:
-				self.lock.release()
-		
 	def __init__(self):
-
 		self.puta = PutAtoms()
 
 		# The below will hang until roscore is started!
@@ -467,17 +397,10 @@ class EvaControl():
 		self.face_array=Faces()
 		ttt=threading.Thread(target=self.thr)
 		ttt.start()
-		#self.atomspace = scheme_eval_as('(cog-atomspace)')
 
 		# Needed for the public define of chat-state, chat-start, etc.
 		# XXX Except that this doesn't actually make chat-state visible?
 		# WTF? But use-modules in btree.scm does work... strange.
-		#scheme_eval(self.atomspace, "(use-modules (opencog exec))")
-		#scheme_eval(self.atomspace, "(use-modules (opencog eva-model))")
-		#lpth="/home/mandeep/hr/opencog/ros-behavior-scripting/src/time-map.scm"
-		#scheme_eval(self.atomspace, "(load \""+lpth+"\")")
-		#scheme_eval(self.atomspace, "(use-modules (opencog ato pointmem))")
-		#scheme_eval(self.atomspace, "(create-map \"faces\" 0.01 66 150) (step-time-unit \"faces\")(auto-step-time-on \"faces\")")
 
 		self.TOPIC_FACE_LOCATIONS = "/camera/face_locations"
 		rospy.Subscriber(self.TOPIC_FACE_LOCATIONS, Faces, self.face_loc_cb)
@@ -518,6 +441,8 @@ class EvaControl():
 
 		self.gaze_at_pub = rospy.Publisher("/opencog/gaze_at",
 			Int32, queue_size=1)
+
+		self.octo=OctoMap(self.turn_pub,self.gaze_pub)
 
 		# ----------------
 		rospy.logwarn("setting up chatbot affect perceive and express links")
