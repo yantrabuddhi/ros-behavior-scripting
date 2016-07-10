@@ -35,7 +35,7 @@ from blender_api_msgs.msg import SomaState
 from chatbot.msg import ChatMessage
 
 from pi_face_tracker.msg import FaceEvent, Faces
-from octomap import OctoMap
+#from octomap import OctoMap
 # Not everything has this message; don't break if it's missing.
 # i.e. create a stub if its not defined.
 #try:
@@ -190,7 +190,8 @@ class EvaControl():
 		self.turn_pub.publish(trg)
 
 	def look_at_face_point(self, fid):
-		self.octo.look_at_face(fid)
+		#self.octo.look_at_face(fid)
+		pass
 
 	# ----------------------------------------------------------
 
@@ -325,7 +326,6 @@ class EvaControl():
 			self.puta.listening_ended()
 			rospy.loginfo("webui ending speech")
 
-
 		else:
 			rospy.logerr("unknown chat_events message: " + chat_event.data)
 
@@ -381,9 +381,10 @@ class EvaControl():
 	# Data is a bit-flag that enables/disables publication of messages.
 	def behavior_control_callback(self, data):
 		self.control_mode = data.data
-	
+
 	def face_loc_cb(self, data):
-		self.octo.set_faces(data.faces)
+		#self.octo.add_faces(data.faces)
+		pass
 
 	def __init__(self):
 		self.puta = PutAtoms()
@@ -391,16 +392,20 @@ class EvaControl():
 		# The below will hang until roscore is started!
 		rospy.init_node("OpenCog_Eva")
 		print("Starting OpenCog Behavior Node")
-		self.lock=threading.Lock();
-		self.sc_str_set=""
-		self.sc_str_get=""
-		self.face_array=Faces()
-		ttt=threading.Thread(target=self.thr)
-		ttt.start()
 
 		# Needed for the public define of chat-state, chat-start, etc.
 		# XXX Except that this doesn't actually make chat-state visible?
 		# WTF? But use-modules in btree.scm does work... strange.
+
+		# XYZ coordinates of where to turn and look.
+		self.turn_pub = rospy.Publisher("/blender_api/set_face_target",
+			Target, queue_size=1)
+
+		self.gaze_pub = rospy.Publisher("/blender_api/set_gaze_target",
+			Target, queue_size=1)
+
+		#self.octo=OctoMap(self.turn_pub,self.gaze_pub)
+
 
 		self.TOPIC_FACE_LOCATIONS = "/camera/face_locations"
 		rospy.Subscriber(self.TOPIC_FACE_LOCATIONS, Faces, self.face_loc_cb)
@@ -425,12 +430,6 @@ class EvaControl():
 		                                   SaccadeCycle, queue_size=1)
 
 		# ----------------
-		# XYZ coordinates of where to turn and look.
-		self.turn_pub = rospy.Publisher("/blender_api/set_face_target",
-			Target, queue_size=1)
-
-		self.gaze_pub = rospy.Publisher("/blender_api/set_gaze_target",
-			Target, queue_size=1)
 
 		# Int32 faceid of the face to glence at or turn and face.
 		self.glance_at_pub = rospy.Publisher("/opencog/glance_at",
@@ -442,7 +441,6 @@ class EvaControl():
 		self.gaze_at_pub = rospy.Publisher("/opencog/gaze_at",
 			Int32, queue_size=1)
 
-		self.octo=OctoMap(self.turn_pub,self.gaze_pub)
 
 		# ----------------
 		rospy.logwarn("setting up chatbot affect perceive and express links")
@@ -494,7 +492,4 @@ class EvaControl():
 		# Full control by default
 		self.control_mode = 255
 		self.running = True
-		#ttt.start()
-		#ttt.join()
-
 # ----------------------------------------------------------------
