@@ -79,7 +79,6 @@ class FaceTrack:
 
 		rospy.init_node("OpenCog_Facetracker")
 		logger.info("Starting OpenCog Face Tracker ROS Node")
-		self.skipper=5
 		# The OpenCog API. This is used to send face data to OpenCog.
 		self.atomo = FaceAtomic()
 
