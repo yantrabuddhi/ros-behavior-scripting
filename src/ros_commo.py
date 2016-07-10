@@ -402,7 +402,7 @@ class EvaControl():
 	# Data is a bit-flag that enables/disables publication of messages.
 	def behavior_control_callback(self, data):
 		self.control_mode = data.data
-	
+
 	def face_loc_cb(self, data):
 		#print "@@@@@@@@@@ In face cb"
 		self.lock.acquire()
@@ -418,7 +418,7 @@ class EvaControl():
 
 	def thr(self):
 		self.atomspace = AtomSpace()#scheme_eval_as('(cog-atomspace)')
-		lpth="/home/mandeep/hr/opencog/ros-behavior-scripting/src/time-map.scm"
+		lpth="time-map.scm"
 		scheme_eval(self.atomspace, "(load \""+lpth+"\")")
 		#print scheme_eval(self.atomspace,"(+ 2 3)")
 		#scheme_eval(self.atomspace, "(map-ato \"faces\" (NumberNode \"2.0\") 1 2 3)")
@@ -453,7 +453,7 @@ class EvaControl():
 					self.sc_str_get=""
 			finally:
 				self.lock.release()
-		
+
 	def __init__(self):
 
 		self.puta = PutAtoms()
