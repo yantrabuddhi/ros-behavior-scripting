@@ -38,6 +38,7 @@ from pi_face_tracker.msg import FaceEvent, Faces
 from opencog.scheme_wrapper import scheme_eval, scheme_eval_h, scheme_eval_as
 import threading
 from opencog.atomspace import AtomSpace, TruthValue
+from geometry_msgs import PoseStamped #for sound
 # Not everything has this message; don't break if it's missing.
 # i.e. create a stub if its not defined.
 #try:
@@ -398,6 +399,15 @@ class EvaControl():
 		finally:
 			self.lock.release()
 
+	def snd1_cb(self,data):
+		self.lock.acquire()
+		try:
+			if len(self.got_snd)<1:
+				self.snd1_dat=data.pose.position
+				self.got_snd="do"
+		finally:
+			self.lock.release()
+
 	def thr(self):
 		self.atomspace = AtomSpace()#scheme_eval_as('(cog-atomspace)')
 		lpth="time-map.scm"
@@ -433,6 +443,13 @@ class EvaControl():
 						self.turn_pub.publish(trg)
 						self.gaze_pub.publish(trg)
 					self.sc_str_get=""
+
+				if len(self.got_snd)>0:
+					#cycle all face-id's and find nearest to sound
+					#also save sound in location
+					ss="(save-snd-1 "+str(self.snd1_dat.x)+" "+str(self.snd1_dat.y)+" "+str(self.snd1_dat.z)+" )"
+					scheme_eval(self.atomspace,ss)
+					self.got_snd=""
 			finally:
 				self.lock.release()
 
@@ -446,6 +463,8 @@ class EvaControl():
 		self.lock=threading.Lock();
 		self.sc_str_set=""
 		self.sc_str_get=""
+		self.got_snd=""
+		self.snd1_dat=Point()
 		self.face_array=Faces()
 		ttt=threading.Thread(target=self.thr)
 		ttt.start()
@@ -536,6 +555,9 @@ class EvaControl():
 		# expressions and gestures.
 		rospy.Subscriber("/behavior_control", Int32, \
 			self.behavior_control_callback)
+
+		rospy.Subscriber("/manyears/source_pose",PoseStamped, \
+			self.snd1_cb)
 
 		# Full control by default
 		self.control_mode = 255
