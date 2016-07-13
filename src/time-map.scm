@@ -55,19 +55,20 @@
 )
 
 (define (angle_bw xyz-a xyz-b)
-	(let* ((sts (string-split xyz-a #\ ))
-		(ax (string->number(car sts)))
-		(ay (string->number(cadr sts)))
-		(az (string->number(caddr sts)))
-		(bx (string->number(car sts)))
-		(by (string->number(cadr sts)))
-		(bz (string->number(caddr sts))))
+	(let* ((sta (string-split xyz-a #\ )
+		(stb (string-split xyz-b #\ ))
+		(ax (string->number(car sta)))
+		(ay (string->number(cadr sta)))
+		(az (string->number(caddr sta)))
+		(bx (string->number(car stb)))
+		(by (string->number(cadr stb)))
+		(bz (string->number(caddr stb))))
 		(angle ax ay az bx by bz))
 )
 
 ;assuming sound was saved with co-oridinate transform applied for camera
 ;angle in radians
-(define (angle_face_snd face-id-node snd-id-node)
-	(angle (look-at-face face-id-node) (get-snd-loc snd-id-node))
+(define (angle_face_snd face-id snd-id)
+	(angle (look-at-face (NumberNode face-id-node)) (get-snd-loc (NumberNode snd-id-node)))
 )
 ;;get all face-ids and only one sound id 1.0, compare them

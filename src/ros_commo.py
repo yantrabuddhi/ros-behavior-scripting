@@ -404,6 +404,8 @@ class EvaControl():
 		try:
 			if len(self.got_snd)<1:
 				self.snd1_dat=data.pose.position
+				#get face-id list
+				self.face_id_list=self.puta.get_faces()
 				self.got_snd="do"
 		finally:
 			self.lock.release()
@@ -444,11 +446,20 @@ class EvaControl():
 						self.gaze_pub.publish(trg)
 					self.sc_str_get=""
 
-				if len(self.got_snd)>0:
+				if len(self.got_snd)>0: #store face-ids of unknown as negative numbers, known as +ve numbers
 					#cycle all face-id's and find nearest to sound
 					#also save sound in location
 					ss="(save-snd-1 "+str(self.snd1_dat.x)+" "+str(self.snd1_dat.y)+" "+str(self.snd1_dat.z)+" )"
 					scheme_eval(self.atomspace,ss)
+					fx=3.142#pi
+					tid=0
+					for fcs in face_id_list:
+						tx=scheme_eval(self.atomspace,"(angle "+fcs+" 1)")
+						if (abs(tx)<fx):
+							fx=tx
+							tid=int(float(fcs))
+						if (abs(tid)>0 and fx<(3.142/180.0)*5):#5 degrees angle in sound and person
+							#publish Int32 face id
 					self.got_snd=""
 			finally:
 				self.lock.release()
@@ -491,6 +502,8 @@ class EvaControl():
 		self.saccade_pub = rospy.Publisher("/blender_api/set_saccade",
 		                                   SaccadeCycle, queue_size=1)
 
+		self.face_sound_pub = rospy.Publisher("/manyyears/face_id",
+											Int32, queue_size=1)
 		# ----------------
 		# XYZ coordinates of where to turn and look.
 		self.turn_pub = rospy.Publisher("/blender_api/set_face_target",

@@ -56,6 +56,11 @@ class PutAtoms:
 		# WTF? But use-modules in btree.scm does work... strange.
 		scheme_eval(self.atomspace, "(use-modules (opencog exec))")
 		scheme_eval(self.atomspace, "(use-modules (opencog eva-model))")
+		sc="(define (show-visible-faces) \
+        (define visible-face (PredicateNode \"visible face\")) \
+        (map (lambda (x) (car (cog-outgoing-set x))) \
+        (cog-chase-link 'EvaluationLink 'ListLink visible-face)))"
+		scheme_eval(self.atomspace, sc)
 
 	# Let atomspace know that vocalization has started or ended.
 	def vocalization_started(self):
@@ -91,3 +96,10 @@ class PutAtoms:
 
 	def btree_run(self):
 		scheme_eval(self.atomspace, "(run)")
+
+	def get_faces(self):
+		fc = "(string-concatenate (map (lambda (x)(string-append (cog-name x) " ")) (cog-filter 'NumberNode (show-visible-faces)) ))"
+		# make fc such that numbers seperated by spaces are returned
+		#then convert the space seperated string to list
+		aa = scheme_eval(self.atomspace, fc)
+		return aa.split()
