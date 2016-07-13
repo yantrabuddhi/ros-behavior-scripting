@@ -454,12 +454,13 @@ class EvaControl():
 					fx=3.142#pi
 					tid=0
 					for fcs in face_id_list:
-						tx=scheme_eval(self.atomspace,"(angle "+fcs+" 1)")
+						tx=scheme_eval(self.atomspace,"(angle_face_snd "+fcs+" 1)")
 						if (abs(tx)<fx):
 							fx=tx
 							tid=int(float(fcs))
-						if (abs(tid)>0 and fx<(3.142/180.0)*5):#5 degrees angle in sound and person
-							#publish Int32 face id
+					if (abs(tid)>0 and fx<(3.142/180.0)*5.0):#5 degrees angle in sound and person
+						#publish Int32 face id
+						self.face_sound_pub.publish(tid)
 					self.got_snd=""
 			finally:
 				self.lock.release()

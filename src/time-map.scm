@@ -55,7 +55,7 @@
 )
 
 (define (angle_bw xyz-a xyz-b)
-	(let* ((sta (string-split xyz-a #\ )
+	(let* ((sta (string-split xyz-a #\ ))
 		(stb (string-split xyz-b #\ ))
 		(ax (string->number(car sta)))
 		(ay (string->number(cadr sta)))
