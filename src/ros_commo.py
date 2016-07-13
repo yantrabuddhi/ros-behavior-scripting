@@ -38,7 +38,7 @@ from pi_face_tracker.msg import FaceEvent, Faces
 from opencog.scheme_wrapper import scheme_eval, scheme_eval_h, scheme_eval_as
 import threading
 from opencog.atomspace import AtomSpace, TruthValue
-from geometry_msgs import PoseStamped #for sound
+from geometry_msgs.msg import PoseStamped #for sound
 # Not everything has this message; don't break if it's missing.
 # i.e. create a stub if its not defined.
 #try:

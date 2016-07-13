@@ -65,6 +65,8 @@ class FaceAtomic:
 	def define_face(self, faceid):
 		face = "(EvaluationLink (PredicateNode \"visible face\") " + \
 		       "(ListLink (NumberNode \"" + str(faceid) + "\")))\n"
+		# face = "(EvaluationLink (av 4 1 1) (PredicateNode \"visible face\") " + \
+		#        "(ListLink (NumberNode \"" + str(faceid) + "\")))\n"
 		return face
 
 	# Build string to delete the face, and also to garbage-collect

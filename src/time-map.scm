@@ -1,4 +1,4 @@
-(use-modules (opencog) (opencog atom-types))
+(use-modules (opencog) (opencog atom-types) (opencog eva-behavior))
 (use-modules (opencog ato pointmem)); needed for mapsi
 ;;initialize octomap with 15hz, 10 second or 150 frames buffer ; 1 cm spatial resolution
 (create-map "faces" 0.01 66 150) (step-time-unit "faces")(auto-step-time-on "faces")

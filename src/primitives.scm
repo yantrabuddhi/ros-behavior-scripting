@@ -97,6 +97,7 @@ except:
 ; To compute the likelihood correctly, we have to compute the
 ; integral since the last time that this check was made. Thus,
 ; if we are calling this predicate 10 times a second, the probability
+
 ; of a transition will be failry small; but if we call it once a second,
 ; the probability will be ten times greater... computing even this
 ; simple integral in atomese is painful. Yuck. But we have to do it.
