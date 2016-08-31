@@ -28,7 +28,7 @@
 (auto-step-time-on "sounds")
 
 ; -----------------------------------------------------------------------------
-
+(define new-person-spoke 0)
 ;;returns null string if atom not found, number x y z string if okay
 ;;these functions assume only one location for one atom in a map at a time
 (define (get-last-xyz map-name id-node elapse)
@@ -204,6 +204,17 @@
 	)
 )
 
+;;TODO: change this function to psi-rule later
+(define (request-attention fid)
+	(set! new-person-spoke fid)
+	(cog-execute!
+	(PutLink
+		(StateLink request-eye-contact-state (VariableNode "$fid"))
+		(GetLink (TypedVariable (Variable "$fid") (TypeNode "NumberNode"))
+			(StateLink
+				(ConceptNode "last person who spoke") (VariableNode "$fid")))
+	))
+)
 
 (define (map-sound xx yy zz)
 	(save-snd-1 xx yy zz)
@@ -214,6 +225,7 @@
 			;;(StateLink request-eye-contact-state (NumberNode fid))
 			;;generate info
 			(StateLink (ConceptNode "last person who spoke") (NumberNode fid))
+			(if (equal? fid new-person-spoke) #t (request-attention fid)
 			)
 		)
 	)
