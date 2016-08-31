@@ -592,7 +592,7 @@
 			(Get (State eye-contact-state (Variable "$x")))
 			(SetLink no-interaction)))
 		(True (Put
-			(Evaluation (GroundedPredicate "scm:look-at-face")
+			(Evaluation (GroundedPredicate "py:look_at_face")
 				(ListLink (Variable "$face")))
 			(Get (State eye-contact-state (Variable "$x")))))
 	))
@@ -617,7 +617,7 @@
 (DefineLink
 	(DefinedPredicate "return to neutral")
 	(SequentialAnd
-		(Evaluation (GroundedPredicate "scm:look-at-face")
+		(Evaluation (GroundedPredicate "py:look_at_face")
 			(ListLink neutral-face))
 		(True (Put
 			(State eye-contact-state (Variable "$face-id"))
@@ -634,7 +634,7 @@
 	(LambdaLink
 		(Variable "$face-id")
 		(SequentialAndLink
-			(Evaluation (GroundedPredicate "scm:gaze-at-face");py:glance_at_face
+			(Evaluation (GroundedPredicate "py:glance_at_face");py:glance_at_face
 				(ListLink (Variable "$face-id")))
 			(True (DefinedSchemaNode "set glance timestamp"))
 			;; Mark it as acked, othwerwise, we'll keep glancing there,
@@ -668,7 +668,7 @@
 	(LambdaLink
 		(Variable "$face-id")
 		(SequentialAndLink
-			(Evaluation (GroundedPredicate "scm:gaze-at-face")
+			(Evaluation (GroundedPredicate "py:glance_at_face")
 				(ListLink (Variable "$face-id")))
 			(True (DefinedSchemaNode "set glance timestamp"))
 		)))

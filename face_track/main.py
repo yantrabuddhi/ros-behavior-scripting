@@ -26,6 +26,7 @@ from face_track import FaceTrack
 
 print "Start face-tracking node"
 ft = FaceTrack()
-ft.do_look_at_actions()
-rospy.spin()
+while not rospy.is_shutdown():
+    ft.do_look_at_actions()
+#rospy.spin()
 print "Exit face-tracking node"

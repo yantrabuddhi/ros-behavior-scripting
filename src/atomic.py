@@ -26,6 +26,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import rospy
+import numpy
 from ros_commo import EvaControl
 from opencog.atomspace import TruthValue
 
@@ -78,11 +79,25 @@ def look_at_point(x_node, y_node, z_node):
 	return TruthValue(1, 1)
 
 def look_at_face_point(x, y, z):
-	evl.look_at_point(x, y, z)
+	xyz1=numpy.array([x,y,z,1.0])
+	conv_mat=numpy.array(
+		[[ 0.82470507,  0.        , -0.56556304,  0.15      ],
+		[ 0.        ,  1.        ,  0.        ,  0.        ],
+		[ 0.56556304,  0.        ,  0.82470507, -0.17      ],
+		[ 0.        ,  0.        ,  0.        ,  1.        ]])
+	xyz=numpy.dot(conv_mat,xyz1)
+	evl.look_at_point(xyz[0], xyz[1], xyz[2])
 	return TruthValue(1, 1)
 
 def gaze_at_face_point(x, y, z):
-	evl.gaze_at_point(x, y, z)
+	xyz1=numpy.array([x,y,z,1.0])
+	conv_mat=numpy.array(
+		[[ 0.82470507,  0.        , -0.56556304,  0.15      ],
+		[ 0.        ,  1.        ,  0.        ,  0.        ],
+		[ 0.56556304,  0.        ,  0.82470507, -0.17      ],
+		[ 0.        ,  0.        ,  0.        ,  1.        ]])
+	xyz=numpy.dot(conv_mat,xyz1)
+	evl.gaze_at_point(xyz[0], xyz[1], xyz[2])
 	return TruthValue(1, 1)
 
 def do_emotion(emotion_node, duration_node, intensity_node):
