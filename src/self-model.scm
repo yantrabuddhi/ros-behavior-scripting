@@ -636,7 +636,7 @@
 		(SequentialAndLink
 			(Evaluation (GroundedPredicate "py:glance_at_face");py:glance_at_face
 				(ListLink (Variable "$face-id")))
-			(True (DefinedSchemaNode "set glance timestamp"))
+			;;(True (DefinedSchemaNode "set glance timestamp"))
 			;; Mark it as acked, othwerwise, we'll keep glancing there,
 			(Evaluation (Predicate "acked face")
 				(ListLink (Variable "$face-id")))
