@@ -21,11 +21,11 @@
 ; -----------------------------------------------------------------------------
 ; For recording sound coordinates, create octomap with 10hz, 10 second or
 ; 100 frames buffer and 0.1 cm spatial resolution.
-(create-map "sounds" 0.001 50 200)
+;;(create-map "sounds" 0.001 50 200)
 ; Initialize  the map
-(step-time-unit "sounds")
+;;(step-time-unit "sounds")
 ; Make the stepping take place automatically
-(auto-step-time-on "sounds")
+;;(auto-step-time-on "sounds")
 
 ; -----------------------------------------------------------------------------
 (define new-person-spoke 0)
@@ -57,15 +57,15 @@
 		)
 )
 
-;;scm code
+;;scm cod
 (define (get-face face-id-node e-start)
  (get-last-xyz "faces" face-id-node (round e-start))
 )
 
 ;;sound id 1
-(define (save-snd-1 x y z)
-	(map-ato "sounds" (NumberNode "1") x y z)
-)
+;;(define (save-snd-1 x y z)
+;;	(map-ato "sounds" (NumberNode "1") x y z)
+;;)
 
 ;;math
 (define (dot-prod ax ay az bx by bz) (+ (* ax bx) (* ay by)(* az bz)))
@@ -85,7 +85,7 @@
 ;angle in radians
 
 (define (angle_face_id_snd face-id xx yy zz)
-	(let* ((fc (get-face (NumberNode face-id) 600)))
+	(let* ((fc (get-face (NumberNode face-id) 4000)))
 		(if (null? fc)
 			(* 2 3.142)
 			(angle (car fc) (cadr fc) (caddr fc) xx yy zz)
@@ -194,7 +194,7 @@
 			(let* ((alist (append-map (lambda (x)(cdr x)) falist))
 					(amin (fold (lambda (n p) (min (abs p) (abs n)))
 						(car alist) alist)))
-				(if (> (/ (* 3.142 15.0) 180.0) amin)
+				(if (> (/ (* 3.142 20.0) 180.0) amin)
 					(car (car (filter
 						(lambda (x) (> (+ amin 0.0001) (abs (cadr x)))) falist)))
 					0
@@ -208,15 +208,15 @@
 (define (request-attention fid)
 	(set! new-person-spoke fid)
 	(StateLink request-eye-contact-state (NumberNode fid))
-  (display (format #f "$$$$$$$ attention requested ~a\n" fid))
+  ;;(display (format #f "$$$$$$$ attention requested ~a\n" fid))
 )
 
 (define (map-sound xx yy zz)
-	(save-snd-1 xx yy zz)
+	;;(save-snd-1 xx yy zz)
 	(let* ((fid (snd-nearest-face xx yy zz)))
 		(if (> fid 0)
 			(begin
-      (display (format #f "################ face found ~a\n" fid))
+      ;;(display (format #f "################ face found ~a\n" fid))
 			;;request eye contact
 			;;(StateLink request-eye-contact-state (NumberNode fid))
 			;;generate info
