@@ -208,7 +208,7 @@
 (define (request-attention fid)
 	(set! new-person-spoke fid)
 	(StateLink request-eye-contact-state (NumberNode fid))
-    (display (format #f "$$$$$$$ attention requested ~a\n" fid))
+  (display (format #f "$$$$$$$ attention requested ~a\n" fid))
 )
 
 (define (map-sound xx yy zz)
@@ -216,7 +216,7 @@
 	(let* ((fid (snd-nearest-face xx yy zz)))
 		(if (> fid 0)
 			(begin
-(display (format #f "################ face found ~a\n" fid))
+      (display (format #f "################ face found ~a\n" fid))
 			;;request eye contact
 			;;(StateLink request-eye-contact-state (NumberNode fid))
 			;;generate info
