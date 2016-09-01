@@ -85,7 +85,7 @@
 ;angle in radians
 
 (define (angle_face_id_snd face-id xx yy zz)
-	(let* ((fc (get-face (NumberNode face-id) 4000)))
+	(let* ((fc (get-face (NumberNode face-id) face-loc-time-span)))
 		(if (null? fc)
 			(* 2 3.142)
 			(angle (car fc) (cadr fc) (caddr fc) xx yy zz)
@@ -194,7 +194,7 @@
 			(let* ((alist (append-map (lambda (x)(cdr x)) falist))
 					(amin (fold (lambda (n p) (min (abs p) (abs n)))
 						(car alist) alist)))
-				(if (> (/ (* 3.142 20.0) 180.0) amin)
+				(if (> (/ (* 3.142 18.0) 180.0) amin)
 					(car (car (filter
 						(lambda (x) (> (+ amin 0.0001) (abs (cadr x)))) falist)))
 					0
